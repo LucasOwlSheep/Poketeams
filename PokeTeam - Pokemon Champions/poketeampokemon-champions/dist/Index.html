@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeTeam - Pokemon Champions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Climate+Crisis&family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAFAF5; --bg-secondary: #F0EDE5; --bg-card: #FFFFFF;
+            --text-primary: #1A1A1A; --text-secondary: #4A4A4A; --accent: #DC143C;
+            --accent-hover: #B01030; --border: #E0DCD0; --shadow: rgba(0,0,0,0.08);
+            --select-bg: #FFFFFF; --hover-bg: #F5F2EC; --header-bg: #FFFFFF;
+            --font-display: 'Climate Crisis', cursive; --font-heading: 'Syne', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0D1117; --bg-secondary: #161B22; --bg-card: #1C2333;
+            --text-primary: #FAFAF5; --text-secondary: #B0B0B0; --accent: #8445d1;
+            --accent-hover: #9B6FE8; --border: #2A3040; --shadow: rgba(0,0,0,0.3);
+            --select-bg: #1C2333; --hover-bg: #222A3A; --header-bg: #161B22;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;transition:all .3s ease;line-height:1.6;font-weight:400}
+        .header{background:var(--header-bg);border-bottom:1px solid var(--border);padding:16px 24px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px var(--shadow)}
+        .header-content{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+        .logo-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .logo-icon img{width:100%;height:100%;object-fit:contain}
+        .logo-text{font-family:var(--font-display);font-size:1.4em;font-weight:400;color:var(--text-primary);letter-spacing:1px;line-height:1}
+        .logo-text span{color:var(--accent)}
+        .logo-subtitle{font-family:var(--font-heading);font-size:.7em;color:var(--text-secondary);font-weight:500;letter-spacing:2px;text-transform:uppercase}
+        .header-actions{display:flex;gap:10px;align-items:center}
+        .btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;transition:all .2s ease;font-weight:500;background:var(--select-bg);color:var(--text-primary);display:inline-flex;align-items:center;gap:6px;font-family:var(--font-body);white-space:nowrap}
+        .btn:hover{background:var(--hover-bg);transform:translateY(-1px)}
+        .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+        .btn-secondary{background:var(--bg-secondary);color:var(--text-primary);border-color:var(--border)}
+        .btn-sm{padding:6px 12px;font-size:12px}
+        .btn-icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--select-bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;color:var(--text-primary);font-weight:700}
+        .btn-icon:hover{background:var(--hover-bg)}
+        .theme-toggle{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--select-bg);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;color:var(--text-primary);flex-shrink:0}
+        .theme-toggle:hover{background:var(--hover-bg)}
+        .container{max-width:1400px;margin:0 auto;padding:20px 24px}
+        .controls-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+        .team-type-selector{display:flex;gap:8px}
+        .team-type-btn{padding:10px 20px;border:1px solid var(--border);background:var(--select-bg);color:var(--text-primary);border-radius:8px;font-size:14px;cursor:pointer;transition:all .2s ease;font-weight:500;font-family:var(--font-body)}
+        .team-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .teams-container{display:flex;flex-direction:column;gap:20px}
+        .team-block{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px var(--shadow);animation:fadeIn .3s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .team-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .2s ease}
+        .team-header:hover{background:var(--hover-bg)}
+        .team-title{font-family:var(--font-heading);font-weight:600;font-size:1.05em;display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+        .team-title input{background:0 0;border:1px solid transparent;color:var(--text-primary);font-weight:600;font-size:1em;font-family:var(--font-heading);cursor:text;padding:2px 6px;border-radius:4px;min-width:100px;max-width:250px}
+        .team-title input:hover{border-color:var(--border)}
+        .team-title input:focus{outline:0;border-color:var(--accent);background:var(--select-bg)}
+        .team-badge{font-size:.7em;padding:3px 10px;border-radius:10px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border);font-family:var(--font-body);font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+        .team-actions{display:flex;gap:6px;flex-shrink:0}
+        .team-content{padding:20px}.team-content.collapsed{display:none}
+        .pokemon-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}
+        .pokemon-slot{background:var(--bg-primary);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:14px;align-items:center;transition:all .2s ease;position:relative}
+        .pokemon-slot:hover{border-color:var(--accent);box-shadow:0 4px 12px var(--shadow)}
+        .slot-images{display:flex;gap:8px;align-items:center;flex-shrink:0}
+        .slot-img{width:80px;height:80px;border-radius:12px;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid var(--border);cursor:pointer}
+        .slot-img img{width:68px;height:68px;object-fit:contain;image-rendering:auto}
+        .slot-img .placeholder{font-size:32px;opacity:.5}
+        .slot-item-img{width:52px;height:52px;border-radius:10px;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid var(--border);cursor:pointer}
+        .slot-item-img img{width:40px;height:40px;object-fit:contain}
+        .slot-item-img .placeholder-item{font-size:22px;opacity:.4}
+        .slot-info{flex:1;min-width:0}
+        .slot-label{font-family:var(--font-heading);font-size:.7em;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+        .slot-types{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+        .type-badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.7em;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:.3px;font-family:var(--font-body)}
+        .type-normal{background:#A8A878}.type-fire{background:#F08030}.type-water{background:#6890F0}.type-electric{background:#F8D030;color:#333}.type-grass{background:#78C850}.type-ice{background:#98D8D8;color:#333}.type-fighting{background:#C03028}.type-poison{background:#A040A0}.type-ground{background:#E0C068;color:#333}.type-flying{background:#A890F0}.type-psychic{background:#F85888}.type-bug{background:#A8B820}.type-rock{background:#B8A038}.type-ghost{background:#705898}.type-dragon{background:#7038F8}.type-dark{background:#705848}.type-steel{background:#B8B8D0;color:#333}.type-fairy{background:#EE99AC}
+        .footer{text-align:center;padding:24px;color:var(--text-secondary);font-size:.85em;border-top:1px solid var(--border);margin-top:40px;font-family:var(--font-body)}
+        
+        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+        .modal-overlay.active{display:flex}
+        .modal{background:var(--bg-card);border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;border:1px solid var(--border)}
+        .modal h3{margin-bottom:16px;color:var(--text-primary);font-family:var(--font-heading)}
+        .modal textarea{width:100%;height:200px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--select-bg);color:var(--text-primary);font-family:'SF Mono',Consolas,monospace;font-size:12px;resize:vertical}
+        .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+        
+        .pokemon-modal{max-width:700px}
+        .pokemon-modal .search-input-modal{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;background:var(--select-bg);color:var(--text-primary);font-size:14px;font-family:var(--font-body);margin-bottom:12px}
+        .pokemon-modal .search-input-modal:focus{outline:0;border-color:var(--accent)}
+        .pokemon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;max-height:350px;overflow-y:auto;padding:4px}
+        .pokemon-card-modal{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--bg-primary)}
+        .pokemon-card-modal:hover{border-color:var(--accent);background:var(--hover-bg);transform:translateY(-2px)}
+        .pokemon-card-modal img{width:48px;height:48px;object-fit:contain;image-rendering:auto}
+        .pokemon-card-modal .poke-name{font-size:10px;color:var(--text-primary);text-align:center;margin-top:4px;line-height:1.1}
+        
+        .item-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:250;align-items:center;justify-content:center}
+        .item-modal-overlay.active{display:flex}
+        .item-modal{background:var(--bg-card);border-radius:12px;padding:20px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;border:1px solid var(--border)}
+        .item-modal h3{margin-bottom:12px;color:var(--text-primary);font-family:var(--font-heading);font-size:1.1em}
+        .item-category-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+        .item-category-tab{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--select-bg);color:var(--text-primary);cursor:pointer;font-size:12px;font-family:var(--font-body);transition:all .2s}
+        .item-category-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .item-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;max-height:400px;overflow-y:auto}
+        .item-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--bg-primary)}
+        .item-option:hover{border-color:var(--accent);background:var(--hover-bg)}
+        .item-option.selected{border-color:var(--accent);background:rgba(220,20,60,.1)}
+        .item-option-img{width:32px;height:32px;border-radius:6px;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+        .item-option-img img{width:24px;height:24px;object-fit:contain}
+        .item-option-name{font-size:12px;color:var(--text-primary);font-family:var(--font-body)}
+        
+        .info-text{font-size:14px;line-height:1.7;color:var(--text-secondary);font-family:var(--font-body)}
+        .info-text strong{color:var(--text-primary)}
+        
+        .empty-state{text-align:center;padding:60px 20px;color:var(--text-secondary)}
+        .empty-state .icon{font-size:64px;margin-bottom:16px;opacity:.5}
+        .empty-state h3{color:var(--text-primary);margin-bottom:8px;font-family:var(--font-heading)}
+        .pokemon-count-badge{font-size:.8em;color:var(--text-secondary);background:var(--bg-secondary);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-family:var(--font-body)}
+        #pngCanvas{display:none}
+        .loading-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+        .loading-overlay.active{display:flex}
+        .loading-spinner{width:50px;height:50px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading-text{color:#fff;font-family:var(--font-body);font-size:16px}
+        
+        .lang-toggle{display:flex;gap:4px;margin-bottom:12px}
+        .lang-btn{padding:4px 12px;border:1px solid var(--border);border-radius:14px;background:var(--select-bg);color:var(--text-primary);cursor:pointer;font-size:11px;font-family:var(--font-body);transition:all .2s}
+        .lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+        
+        @media(max-width:768px){.header-content{flex-wrap:wrap;gap:10px}.logo-text{font-size:1.1em}.pokemon-slots{grid-template-columns:1fr}.pokemon-slot{flex-direction:column;text-align:center}.slot-images{margin:0 auto}.btn{padding:6px 12px;font-size:12px}.header-actions{flex-wrap:wrap}.controls-bar{flex-direction:column;align-items:stretch}.team-type-selector{flex-direction:column}.team-type-btn{text-align:center}}
+        select option{background:var(--select-bg);color:var(--text-primary)}
+        ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--bg-primary)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--text-secondary)}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"><img src="https://i.imgur.com/lKI17PA.png" alt="PokeTeam Logo" id="logoImg"></div>
+                <div><div class="logo-text">Poke<span>Team</span></div><div class="logo-subtitle">Pokémon Champions</div></div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary btn-sm" onclick="openComingSoonModal()" title="Em breve">Em breve</button>
+                <button class="btn-icon" onclick="openInfoModal()" title="Informações">i</button>
+                <button class="btn btn-sm" onclick="importTeams()">📥 Importar</button>
+                <button class="btn btn-sm" onclick="exportTeams()">📤 Exportar</button>
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="controls-bar">
+            <div class="team-type-selector">
+                <button class="team-type-btn active" data-type="single" onclick="selectGlobalType('single')"> Single Battle</button>
+                <button class="team-type-btn" data-type="double" onclick="selectGlobalType('double')"> Double Battle</button>
+            </div>
+            <button class="btn btn-accent" onclick="createNewTeam()">＋ Novo Time</button>
+            <span class="pokemon-count-badge">📋 <span id="pokeCount"></span> Pokémon disponíveis</span>
+        </div>
+        <div class="teams-container" id="teamsContainer">
+            <div class="empty-state"><div class="icon">🏆</div><h3>Nenhum time criado ainda</h3><p>Clique em "Novo Time" para começar!</p></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
+    <div class="modal-overlay" id="pokemonModalOverlay"><div class="modal pokemon-modal" id="pokemonModalContent"></div></div>
+    <div class="item-modal-overlay" id="itemModalOverlay"><div class="item-modal" id="itemModalContent"></div></div>
+    <div class="modal-overlay" id="comingSoonModalOverlay"><div class="modal" id="comingSoonModalContent"></div></div>
+    <div class="modal-overlay" id="infoModalOverlay"><div class="modal" id="infoModalContent"></div></div>
+    
+    <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Gerando imagem do time...</div></div>
+    <canvas id="pngCanvas"></canvas>
+    <footer class="footer">All rights reserved, OwlSheep<br><span style="font-size:0.8em;opacity:0.7;">Version 1.9</span></footer>
+
+    <script>
+        const pokemonData = [
+            { name: "abomasnow", types: ["grass", "ice"] },{ name: "absol", types: ["dark"] },{ name: "aegislash", types: ["steel", "ghost"] },{ name: "aerodactyl", types: ["rock", "flying"] },{ name: "aggron", types: ["steel", "rock"] },{ name: "alcremie", types: ["fairy"] },{ name: "altaria", types: ["dragon", "flying"] },{ name: "ampharos", types: ["electric"] },{ name: "annihilape", types: ["fighting", "ghost"] },{ name: "appletun", types: ["grass", "dragon"] },{ name: "araquanid", types: ["water", "bug"] },{ name: "arbok", types: ["poison"] },{ name: "arcanine", types: ["fire"] },{ name: "arcanine-hisui", types: ["fire", "rock"] },{ name: "archaludon", types: ["steel", "dragon"] },{ name: "ariados", types: ["bug", "poison"] },{ name: "armarouge", types: ["fire", "psychic"] },{ name: "aromatisse", types: ["fairy"] },{ name: "audino", types: ["normal"] },{ name: "aurorus", types: ["rock", "ice"] },{ name: "avalugg", types: ["ice"] },{ name: "avalugg-hisui", types: ["ice", "rock"] },{ name: "azumarill", types: ["water", "fairy"] },{ name: "banette", types: ["ghost"] },{ name: "barbaracle", types: ["rock", "water"] },{ name: "basculegion", types: ["water", "ghost"] },{ name: "basculegion-f", types: ["water", "ghost"] },{ name: "bastiodon", types: ["rock", "steel"] },{ name: "beartic", types: ["ice"] },{ name: "beedrill", types: ["bug", "poison"] },{ name: "bellibolt", types: ["electric"] },{ name: "blastoise", types: ["water"] },{ name: "blaziken", types: ["fire", "fighting"] },{ name: "camerupt", types: ["fire", "ground"] },{ name: "castform", types: ["normal"] },{ name: "castform-rainy", types: ["water"] },{ name: "castform-snowy", types: ["ice"] },{ name: "castform-sunny", types: ["fire"] },{ name: "ceruledge", types: ["fire", "ghost"] },{ name: "chandelure", types: ["ghost", "fire"] },{ name: "charizard", types: ["fire", "flying"] },{ name: "chesnaught", types: ["grass", "fighting"] },{ name: "chimecho", types: ["psychic"] },{ name: "clawitzer", types: ["water"] },{ name: "clefable", types: ["fairy"] },{ name: "cofagrigus", types: ["ghost"] },{ name: "conkeldurr", types: ["fighting"] },{ name: "corviknight", types: ["flying", "steel"] },{ name: "crabominable", types: ["fighting", "ice"] },{ name: "decidueye", types: ["grass", "ghost"] },{ name: "decidueye-hisui", types: ["grass", "fighting"] },{ name: "dedenne", types: ["electric", "fairy"] },{ name: "delphox", types: ["fire", "psychic"] },{ name: "diggersby", types: ["normal", "ground"] },{ name: "ditto", types: ["normal"] },{ name: "dragalge", types: ["poison", "dragon"] },{ name: "dragapult", types: ["dragon", "ghost"] },{ name: "dragonite", types: ["dragon", "flying"] },{ name: "drampa", types: ["normal", "dragon"] },{ name: "eelektross", types: ["electric"] },{ name: "emboar", types: ["fire", "fighting"] },{ name: "empoleon", types: ["water", "steel"] },{ name: "espathra", types: ["psychic"] },{ name: "espeon", types: ["psychic"] },{ name: "excadrill", types: ["ground", "steel"] },{ name: "falinks", types: ["fighting"] },{ name: "farigiraf", types: ["normal", "psychic"] },{ name: "feraligatr", types: ["water"] },{ name: "flapple", types: ["grass", "dragon"] },{ name: "flareon", types: ["fire"] },{ name: "floette-eternal", types: ["fairy"] },{ name: "florges", types: ["fairy"] },{ name: "forretress", types: ["bug", "steel"] },{ name: "froslass", types: ["ice", "ghost"] },{ name: "furfrou", types: ["normal"] },{ name: "gallade", types: ["psychic", "fighting"] },{ name: "garbodor", types: ["poison"] },{ name: "garchomp", types: ["dragon", "ground"] },{ name: "gardevoir", types: ["psychic", "fairy"] },{ name: "garganacl", types: ["rock"] },{ name: "gengar", types: ["ghost", "poison"] },{ name: "glaceon", types: ["ice"] },{ name: "glalie", types: ["ice"] },{ name: "glimmora", types: ["rock", "poison"] },{ name: "gliscor", types: ["ground", "flying"] },{ name: "goodra", types: ["dragon"] },{ name: "goodra-hisui", types: ["steel", "dragon"] },{ name: "gourgeist", types: ["ghost", "grass"] },{ name: "greninja", types: ["water", "dark"] },{ name: "grimmsnarl", types: ["dark", "fairy"] },{ name: "gyarados", types: ["water", "flying"] },{ name: "hatterene", types: ["psychic", "fairy"] },{ name: "hawlucha", types: ["fighting", "flying"] },{ name: "heliolisk", types: ["electric", "normal"] },{ name: "heracross", types: ["bug", "fighting"] },{ name: "hippowdon", types: ["ground"] },{ name: "houndoom", types: ["dark", "fire"] },{ name: "houndstone", types: ["ghost"] },{ name: "hydrapple", types: ["grass", "dragon"] },{ name: "hydreigon", types: ["dark", "dragon"] },{ name: "incineroar", types: ["fire", "dark"] },{ name: "infernape", types: ["fire", "fighting"] },{ name: "jolteon", types: ["electric"] },{ name: "kangaskhan", types: ["normal"] },{ name: "kingambit", types: ["dark", "steel"] },{ name: "kleavor", types: ["bug", "rock"] },{ name: "klefki", types: ["steel", "fairy"] },{ name: "kommo-o", types: ["dragon", "fighting"] },{ name: "krookodile", types: ["ground", "dark"] },{ name: "leafeon", types: ["grass"] },{ name: "liepard", types: ["dark"] },{ name: "lopunny", types: ["normal"] },{ name: "lucario", types: ["fighting", "steel"] },{ name: "luxray", types: ["electric"] },{ name: "lycanroc", types: ["rock"] },{ name: "lycanroc-dusk", types: ["rock"] },{ name: "lycanroc-midnight", types: ["rock"] },{ name: "machamp", types: ["fighting"] },{ name: "malamar", types: ["dark", "psychic"] },{ name: "mamoswine", types: ["ice", "ground"] },{ name: "manectric", types: ["electric"] },{ name: "maushold", types: ["normal"] },{ name: "mawile", types: ["steel", "fairy"] },{ name: "medicham", types: ["fighting", "psychic"] },{ name: "meganium", types: ["grass"] },{ name: "meowscarada", types: ["grass", "dark"] },{ name: "meowstic-f", types: ["psychic"] },{ name: "meowstic-m", types: ["psychic"] },{ name: "metagross", types: ["steel", "psychic"] },{ name: "milotic", types: ["water"] },{ name: "mimikyu", types: ["ghost", "fairy"] },{ name: "morpeko", types: ["electric", "dark"] },{ name: "morpeko-hangry", types: ["electric", "dark"] },{ name: "mr-rime", types: ["psychic", "ice"] },{ name: "mudsdale", types: ["ground"] },{ name: "musharna", types: ["psychic"] },{ name: "ninetales", types: ["fire"] },{ name: "ninetales-alola", types: ["ice", "fairy"] },{ name: "noivern", types: ["flying", "dragon"] },{ name: "oranguru", types: ["normal", "psychic"] },{ name: "orthworm", types: ["steel"] },{ name: "overqwil", types: ["dark", "poison"] },{ name: "palafin", types: ["water"] },{ name: "pangoro", types: ["fighting", "dark"] },{ name: "passimian", types: ["fighting"] },{ name: "pelipper", types: ["water", "flying"] },{ name: "pidgeot", types: ["normal", "flying"] },{ name: "pikachu", types: ["electric"] },{ name: "pinsir", types: ["bug"] },{ name: "politoed", types: ["water"] },{ name: "polteageist", types: ["ghost"] },{ name: "primarina", types: ["water", "fairy"] },{ name: "pyroar", types: ["fire", "normal"] },{ name: "quaquaval", types: ["water", "fighting"] },{ name: "qwilfish", types: ["water", "poison"] },{ name: "raichu", types: ["electric"] },{ name: "raichu-alola", types: ["electric", "psychic"] },{ name: "rampardos", types: ["rock"] },{ name: "reuniclus", types: ["psychic"] },{ name: "rhyperior", types: ["ground", "rock"] },{ name: "roserade", types: ["grass", "poison"] },{ name: "rotom", types: ["electric", "ghost"] },{ name: "rotom-fan", types: ["electric", "flying"] },{ name: "rotom-frost", types: ["electric", "ice"] },{ name: "rotom-heat", types: ["electric", "fire"] },{ name: "rotom-mow", types: ["electric", "grass"] },{ name: "rotom-wash", types: ["electric", "water"] },{ name: "runerigus", types: ["ground", "ghost"] },{ name: "sableye", types: ["dark", "ghost"] },{ name: "salazzle", types: ["poison", "fire"] },{ name: "samurott", types: ["water"] },{ name: "samurott-hisui", types: ["water", "dark"] },{ name: "sandaconda", types: ["ground"] },{ name: "sceptile", types: ["grass"] },{ name: "scizor", types: ["bug", "steel"] },{ name: "scolipede", types: ["bug", "poison"] },{ name: "scovillain", types: ["grass", "fire"] },{ name: "scrafty", types: ["dark", "fighting"] },{ name: "serperior", types: ["grass"] },{ name: "sharpedo", types: ["water", "dark"] },{ name: "simipour", types: ["water"] },{ name: "simisage", types: ["grass"] },{ name: "simisear", types: ["fire"] },{ name: "sinistcha", types: ["grass", "ghost"] },{ name: "skarmory", types: ["steel", "flying"] },{ name: "skeledirge", types: ["fire", "ghost"] },{ name: "slowbro", types: ["water", "psychic"] },{ name: "slowbro-galar", types: ["poison", "psychic"] },{ name: "slowking", types: ["water", "psychic"] },{ name: "slowking-galar", types: ["poison", "psychic"] },{ name: "slurpuff", types: ["fairy"] },{ name: "sneasler", types: ["fighting", "poison"] },{ name: "snorlax", types: ["normal"] },{ name: "spiritomb", types: ["ghost", "dark"] },{ name: "staraptor", types: ["normal", "flying"] },{ name: "starmie", types: ["water", "psychic"] },{ name: "steelix", types: ["steel", "ground"] },{ name: "stunfisk", types: ["ground", "electric"] },{ name: "stunfisk-galar", types: ["ground", "steel"] },{ name: "swampert", types: ["water", "ground"] },{ name: "sylveon", types: ["fairy"] },{ name: "talonflame", types: ["fire", "flying"] },{ name: "tauros", types: ["normal"] },{ name: "tauros-paldea-aqua", types: ["fighting", "water"] },{ name: "tauros-paldea-blaze", types: ["fighting", "fire"] },{ name: "tauros-paldea-combat", types: ["fighting"] },{ name: "tinkaton", types: ["fairy", "steel"] },{ name: "torkoal", types: ["fire"] },{ name: "torterra", types: ["grass", "ground"] },{ name: "toucannon", types: ["normal", "flying"] },{ name: "toxapex", types: ["poison", "water"] },{ name: "toxicroak", types: ["poison", "fighting"] },{ name: "trevenant", types: ["ghost", "grass"] },{ name: "tsareena", types: ["grass"] },{ name: "typhlosion", types: ["fire"] },{ name: "typhlosion-hisui", types: ["fire", "ghost"] },{ name: "tyranitar", types: ["rock", "dark"] },{ name: "tyrantrum", types: ["rock", "dragon"] },{ name: "umbreon", types: ["dark"] },{ name: "vanilluxe", types: ["ice"] },{ name: "vaporeon", types: ["water"] },{ name: "venusaur", types: ["grass", "poison"] },{ name: "victreebel", types: ["grass", "poison"] },{ name: "vileplume", types: ["grass", "poison"] },{ name: "vivillon", types: ["bug", "flying"] },{ name: "vivillon-fancy", types: ["bug", "flying"] },{ name: "vivillon-pokeball", types: ["bug", "flying"] },{ name: "volcarona", types: ["bug", "fire"] },{ name: "watchog", types: ["normal"] },{ name: "weavile", types: ["dark", "ice"] },{ name: "whimsicott", types: ["grass", "fairy"] },{ name: "wyrdeer", types: ["normal", "psychic"] },{ name: "zoroark", types: ["dark"] },{ name: "zoroark-hisui", types: ["normal", "ghost"] }
+        ];
+        pokemonData.sort((a, b) => a.name.localeCompare(b.name));
+        document.getElementById('pokeCount').textContent = pokemonData.length;
+
+        const holdItems = ["Big Root","Black Belt","Black Glasses","Bright Powder","Charcoal","Choice Scarf","Damp Rock","Dragon Fang","Expert Belt","Fairy Feather","Focus Band","Focus Sash","Hard Stone","Heat Rock","Icy Rock","Iron Ball","King's Rock","Leftovers","Life Orb","Light Ball","Light Clay","Magnet","Mental Herb","Metal Coat","Metronome","Miracle Seed","Muscle Band","Mystic Water","Never-Melt Ice","Poison Barb","Quick Claw","Scope Lens","Sharp Beak","Shed Shell","Shell Bell","Silk Scarf","Silver Powder","Smooth Rock","Soft Sand","Spell Tag","Twisted Spoon","White Herb","Wide Lens","Wise Glasses","Zoom Lens"];
+        const megaStones = ["Abomasite","Absolite","Aerodactylite","Aggronite","Alakazite","Altarianite","Ampharosite","Audinite","Banettite","Barbaracite","Beedrillite","Blastoisinite","Blazikenite","Cameruptite","Chandelurite","Charizardite X","Charizardite Y","Chesnaughtite","Chimechite","Clefablite","Crabominite","Delphoxite","Dragalgite","Dragoninite","Drampanite","Eelektrossite","Emboarite","Excadrite","Falinksite","Feraligite","Floettite","Froslassite","Galladite","Garchompite","Gardevoirite","Gengarite","Glalitite","Glimmoranite","Golurkite","Greninjite","Gyaradosite","Hawluchanite","Heracronite","Houndoominite","Kangaskhanite","Lopunnite","Lucarionite","Malamarite","Manectite","Mawilite","Medichamite","Meganiumite","Meowsticite","Metagrossite","Pidgeotite","Pinsirite","Pyroarite","Raichunite X","Raichunite Y","Sablenite","Sceptilite","Scizorite","Scolipite","Scovillainite","Scraftinite","Sharpedonite","Skarmorite","Slowbronite","Staraptite","Starminite","Steelixite","Swampertite","Tyranitarite","Venusaurite","Victreebelite"];
+        const berries = ["Aspear Berry","Babiri Berry","Charti Berry","Cheri Berry","Chesto Berry","Chilan Berry","Chople Berry","Coba Berry","Colbur Berry","Haban Berry","Kasib Berry","Kebia Berry","Leppa Berry","Lum Berry","Occa Berry","Oran Berry","Passho Berry","Payapa Berry","Pecha Berry","Persim Berry","Rawst Berry","Rindo Berry","Roseli Berry","Shuca Berry","Sitrus Berry","Tanga Berry","Wacan Berry","Yache Berry"];
+
+        const itemUrlCorrections = {"Staraptite":"staraptorite","Scraftinite":"scraftite","Scolipite":"scolipedite","Barbaracite":"barbaraclite"};
+
+        let teams = [];
+        let globalBattleType = 'single';
+        let teamCounter = 0;
+        let infoLang = 'pt';
+        let comingSoonLang = 'pt';
+
+        const GITHUB_GIF_BASE = 'https://raw.githubusercontent.com/LucasOwlSheep/Poketeams/refs/heads/main/POKEMON%20CHAMPIONS%20GIF';
+
+        function capitalizeName(name) { return name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-'); }
+        function getPokemonGifUrl(name) { return `${GITHUB_GIF_BASE}/${name}.gif`; }
+        function getItemImageUrl(itemName) {
+            if (itemUrlCorrections[itemName]) return `https://s-stats-platform-cdn.op.gg/pokemon-champions/images/items/${itemUrlCorrections[itemName]}.png?image=q_auto:good,f_webp,w_64&v=1782826634`;
+            if (itemName === "Zoom Lens") return "https://archives.bulbagarden.net/media/upload/c/cb/Bag_Zoom_Lens_Pokopia_Sprite.png";
+            const f = itemName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            return `https://s-stats-platform-cdn.op.gg/pokemon-champions/images/items/${f}.png?image=q_auto:good,f_webp,w_64&v=1782826634`;
+        }
+        function loadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image(); img.crossOrigin = 'Anonymous';
+                img.onload = () => resolve(img); img.onerror = reject; img.src = url;
+            });
+        }
+        let logoSprite = null;
+        async function getLogoSprite() {
+            if (logoSprite) return logoSprite;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            try { logoSprite = await loadImage(isDark ? 'https://i.imgur.com/kfQYTys.png' : 'https://i.imgur.com/lKI17PA.png'); } catch (e) { logoSprite = null; }
+            return logoSprite;
+        }
+
+        function selectGlobalType(type) { globalBattleType = type; document.querySelectorAll('.team-type-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type)); }
+        function createNewTeam() { teamCounter++; teams.push({ id: Date.now(), name: `Time ${teamCounter}`, type: globalBattleType, collapsed: false, pokemons: Array(6).fill().map(() => ({ pokemon: '', item: '' })) }); renderTeams(); }
+        function deleteTeam(id) { teams = teams.filter(t => t.id !== id); renderTeams(); }
+        function toggleTeam(id) { const t = teams.find(x => x.id === id); if (t) { t.collapsed = !t.collapsed; renderTeams(); } }
+        function updateTeamName(id, n) { const t = teams.find(x => x.id === id); if (t) t.name = n || `Time ${teamCounter}`; }
+        function updatePokemon(teamId, i, v) { const t = teams.find(x => x.id === teamId); if (t) { t.pokemons[i] = { ...t.pokemons[i], pokemon: v }; renderTeams(); } }
+        function updateItem(teamId, i, v) { const t = teams.find(x => x.id === teamId); if (t) { t.pokemons[i] = { ...t.pokemons[i], item: v }; renderTeams(); } }
+        function getPokemonData(name) { return pokemonData.find(p => p.name === name); }
+
+        // Modal de Pokémon
+        function openPokemonModal(teamId, slotIndex) {
+            const currentPoke = teams.find(t => t.id === teamId)?.pokemons[slotIndex]?.pokemon || '';
+            const overlay = document.getElementById('pokemonModalOverlay');
+            const content = document.getElementById('pokemonModalContent');
+            content.innerHTML = `
+                <h3>🔍 Selecionar Pokémon - Slot ${slotIndex + 1}</h3>
+                <input type="text" class="search-input-modal" placeholder="Digite o nome do Pokémon..." oninput="filterPokemonModal('${teamId}', ${slotIndex}, this.value)" autocomplete="off">
+                <button class="btn btn-sm" style="margin-bottom:8px;width:100%;" onclick="updatePokemon(${teamId}, ${slotIndex}, '');closePokemonModal();renderTeams();">🗑️ Remover Pokémon</button>
+                <div class="pokemon-grid" id="pokemonGridModal"></div>
+            `;
+            overlay.classList.add('active');
+            filterPokemonModal(teamId, slotIndex, '');
+        }
+
+        function filterPokemonModal(teamId, slotIndex, search) {
+            const grid = document.getElementById('pokemonGridModal');
+            const s = search.toLowerCase();
+            const currentPoke = teams.find(t => t.id === teamId)?.pokemons[slotIndex]?.pokemon || '';
+            const filtered = pokemonData.filter(p => !s || p.name.includes(s) || capitalizeName(p.name).toLowerCase().includes(s));
+            grid.innerHTML = filtered.map(p => `
+                <div class="pokemon-card-modal" onclick="updatePokemon(${teamId}, ${slotIndex}, '${p.name}');closePokemonModal();renderTeams();" style="${currentPoke === p.name ? 'border-color:var(--accent);background:rgba(220,20,60,.1);' : ''}">
+                    <img src="${getPokemonGifUrl(p.name)}" alt="${capitalizeName(p.name)}" loading="lazy" crossorigin="anonymous">
+                    <div class="poke-name">${capitalizeName(p.name)}</div>
+                </div>
+            `).join('');
+        }
+
+        function closePokemonModal() { document.getElementById('pokemonModalOverlay').classList.remove('active'); }
+        document.getElementById('pokemonModalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closePokemonModal(); });
+
+        // Modal de Itens
+        function openItemModal(teamId, slotIndex) {
+            const currentItem = teams.find(t => t.id === teamId)?.pokemons[slotIndex]?.item || '';
+            const currentCat = holdItems.includes(currentItem) ? 'hold' : megaStones.includes(currentItem) ? 'mega' : berries.includes(currentItem) ? 'berry' : 'hold';
+            const overlay = document.getElementById('itemModalOverlay');
+            const content = document.getElementById('itemModalContent');
+            content.innerHTML = `
+                <h3>🎒 Selecionar Item - Slot ${slotIndex + 1}</h3>
+                <div class="item-category-tabs">
+                    <button class="item-category-tab ${currentCat==='hold'?'active':''}" onclick="switchItemCategory('hold', ${teamId}, ${slotIndex})">Hold Items</button>
+                    <button class="item-category-tab ${currentCat==='mega'?'active':''}" onclick="switchItemCategory('mega', ${teamId}, ${slotIndex})">Mega Stones</button>
+                    <button class="item-category-tab ${currentCat==='berry'?'active':''}" onclick="switchItemCategory('berry', ${teamId}, ${slotIndex})">Berries</button>
+                </div>
+                <button class="btn btn-sm" style="margin-bottom:8px;width:100%;" onclick="updateItem(${teamId}, ${slotIndex}, '');closeItemModal();renderTeams();">🗑️ Remover Item</button>
+                <div class="item-list" id="itemList"></div>
+            `;
+            overlay.classList.add('active');
+            switchItemCategory(currentCat, teamId, slotIndex);
+        }
+
+        function switchItemCategory(cat, teamId, slotIndex) {
+            const list = document.getElementById('itemList');
+            const items = cat === 'hold' ? holdItems : cat === 'mega' ? megaStones : berries;
+            const currentItem = teams.find(t => t.id === teamId)?.pokemons[slotIndex]?.item || '';
+            document.querySelectorAll('.item-category-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.item-category-tab:nth-child(${cat==='hold'?1:cat==='mega'?2:3})`)?.classList.add('active');
+            list.innerHTML = items.map(item => `
+                <div class="item-option ${currentItem === item ? 'selected' : ''}" onclick="updateItem(${teamId}, ${slotIndex}, '${escapeHtml(item)}');closeItemModal();renderTeams();">
+                    <div class="item-option-img"><img src="${getItemImageUrl(item)}" alt="${item}" loading="lazy" onerror="this.innerHTML='🎒'"></div>
+                    <div class="item-option-name">${item}</div>
+                </div>
+            `).join('');
+        }
+
+        function closeItemModal() { document.getElementById('itemModalOverlay').classList.remove('active'); }
+        document.getElementById('itemModalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeItemModal(); });
+
+        // Modal Em Breve (com toggle de idioma)
+        function openComingSoonModal() {
+            const overlay = document.getElementById('comingSoonModalOverlay');
+            const content = document.getElementById('comingSoonModalContent');
+            const texts = {
+                pt: `<strong>Novas Atualizações em breve</strong><br>- Ataques: terá barras de seleção de ataques`,
+                en: `<strong>New Updates Coming Soon</strong><br>- Attacks: will have attack selection bars`
+            };
+            content.innerHTML = `
+                <h3> Em Breve / Coming Soon</h3>
+                <div class="lang-toggle">
+                    <button class="lang-btn ${comingSoonLang==='pt'?'active':''}" onclick="switchComingSoonLang('pt')">🇧🇷 PT</button>
+                    <button class="lang-btn ${comingSoonLang==='en'?'active':''}" onclick="switchComingSoonLang('en')">🇺🇸 EN</button>
+                </div>
+                <div class="info-text" id="comingSoonText">${texts[comingSoonLang]}</div>
+                <div class="modal-actions"><button class="btn btn-accent" onclick="closeComingSoonModal()">Fechar</button></div>
+            `;
+            overlay.classList.add('active');
+        }
+        function switchComingSoonLang(lang) {
+            comingSoonLang = lang;
+            const texts = {
+                pt: `<strong>Novas Atualizações em breve</strong><br>- Ataques: terá barras de seleção de ataques`,
+                en: `<strong>New Updates Coming Soon</strong><br>- Attacks: will have attack selection bars`
+            };
+            const textEl = document.getElementById('comingSoonText');
+            if (textEl) textEl.innerHTML = texts[lang];
+            document.querySelectorAll('#comingSoonModalContent .lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`#comingSoonModalContent .lang-btn:nth-child(${lang==='pt'?1:2})`)?.classList.add('active');
+        }
+        function closeComingSoonModal() { document.getElementById('comingSoonModalOverlay').classList.remove('active'); }
+        document.getElementById('comingSoonModalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeComingSoonModal(); });
+
+        // Modal Informações
+        function openInfoModal() {
+            const overlay = document.getElementById('infoModalOverlay');
+            const content = document.getElementById('infoModalContent');
+            const texts = {
+                pt: `<strong>Feito por fã para fãs de Pokémon!</strong> Este projeto tem como objetivo oferecer um espaço onde treinadores possam criar, organizar e compartilhar seus times de forma simples, bonita e acessível. Pokémon e todos os seus direitos pertencem à Nintendo, Game Freak e The Pokémon Company. Este é um projeto sem fins lucrativos criado pela comunidade.`,
+                en: `<strong>Made by fans for Pokémon fans!</strong> This project aims to offer a space where trainers can create, organize and share their teams in a simple, beautiful and accessible way. Pokémon and all its rights belong to Nintendo, Game Freak and The Pokémon Company. This is a non-profit project created by the community.`
+            };
+            content.innerHTML = `
+                <h3>ℹ️ Informações</h3>
+                <div class="lang-toggle">
+                    <button class="lang-btn ${infoLang==='pt'?'active':''}" onclick="switchInfoLang('pt')">🇧🇷 PT</button>
+                    <button class="lang-btn ${infoLang==='en'?'active':''}" onclick="switchInfoLang('en')">🇺🇸 EN</button>
+                </div>
+                <div class="info-text" id="infoText">${texts[infoLang]}</div>
+                <div class="modal-actions"><button class="btn btn-accent" onclick="closeInfoModal()">Fechar</button></div>
+            `;
+            overlay.classList.add('active');
+        }
+        function switchInfoLang(lang) {
+            infoLang = lang;
+            const texts = {
+                pt: `<strong>Feito por fã para fãs de Pokémon!</strong> Este projeto tem como objetivo oferecer um espaço onde treinadores possam criar, organizar e compartilhar seus times de forma simples, bonita e acessível. Pokémon e todos os seus direitos pertencem à Nintendo, Game Freak e The Pokémon Company. Este é um projeto sem fins lucrativos criado pela comunidade.`,
+                en: `<strong>Made by fans for Pokémon fans!</strong> This project aims to offer a space where trainers can create, organize and share their teams in a simple, beautiful and accessible way. Pokémon and all its rights belong to Nintendo, Game Freak and The Pokémon Company. This is a non-profit project created by the community.`
+            };
+            document.getElementById('infoText').innerHTML = texts[lang];
+            document.querySelectorAll('#infoModalContent .lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`#infoModalContent .lang-btn:nth-child(${lang==='pt'?1:2})`)?.classList.add('active');
+        }
+        function closeInfoModal() { document.getElementById('infoModalOverlay').classList.remove('active'); }
+        document.getElementById('infoModalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeInfoModal(); });
+
+        function renderTeams() {
+            const container = document.getElementById('teamsContainer');
+            if (teams.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">🏆</div><h3>Nenhum time criado ainda</h3><p>Clique em "Novo Time" para começar!</p></div>`;
+                return;
+            }
+            container.innerHTML = teams.map(team => `
+                <div class="team-block">
+                    <div class="team-header" onclick="toggleTeam(${team.id})">
+                        <div class="team-title">
+                            <span style="font-size:0.8em;color:var(--text-secondary);">${team.collapsed ? '▶' : '▼'}</span>
+                            <input type="text" value="${escapeHtml(team.name)}" onclick="event.stopPropagation()" onchange="updateTeamName(${team.id}, this.value)">
+                            <span class="team-badge">${team.type === 'single' ? 'Single' : 'Double'}</span>
+                        </div>
+                        <div class="team-actions" onclick="event.stopPropagation()">
+                            <button class="btn btn-sm" onclick="exportTeamToPng(${team.id})">🖼️</button>
+                            <button class="btn btn-sm" onclick="duplicateTeam(${team.id})">📋</button>
+                            <button class="btn btn-sm" onclick="deleteTeam(${team.id})" style="color:var(--accent);">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="team-content ${team.collapsed ? 'collapsed' : ''}">
+                        <div class="pokemon-slots">
+                            ${team.pokemons.map((slot, index) => {
+                                const pokeData = getPokemonData(slot.pokemon);
+                                const types = pokeData ? pokeData.types : [];
+                                const gifUrl = slot.pokemon ? getPokemonGifUrl(slot.pokemon) : '';
+                                const displayName = slot.pokemon ? capitalizeName(slot.pokemon) : '';
+                                const itemImgUrl = slot.item ? getItemImageUrl(slot.item) : '';
+                                return `
+                                <div class="pokemon-slot">
+                                    <div class="slot-images">
+                                        <div class="slot-img" onclick="openPokemonModal(${team.id}, ${index})" title="Clique para selecionar Pokémon">
+                                            ${slot.pokemon ? `<img src="${gifUrl}" alt="${displayName}" loading="lazy" crossorigin="anonymous">` : '<span class="placeholder">🐾</span>'}
+                                        </div>
+                                        <div class="slot-item-img" onclick="openItemModal(${team.id}, ${index})" title="Clique para selecionar item">
+                                            ${slot.item ? `<img src="${itemImgUrl}" alt="${escapeHtml(slot.item)}" loading="lazy" crossorigin="anonymous" onerror="this.innerHTML='🎒'">` : '<span class="placeholder-item">🎒</span>'}
+                                        </div>
+                                    </div>
+                                    <div class="slot-info">
+                                        <div class="slot-label">Slot ${index + 1}</div>
+                                        <div style="font-size:14px;font-weight:600;color:var(--text-primary);cursor:pointer;margin-bottom:4px;" onclick="openPokemonModal(${team.id}, ${index})">
+                                            ${slot.pokemon ? displayName : 'Selecionar Pokémon...'}
+                                        </div>
+                                        <div style="font-size:12px;color:var(--text-secondary);cursor:pointer;" onclick="openItemModal(${team.id}, ${index})">
+                                            🎒 ${slot.item || 'Nenhum item (clique para selecionar)'}
+                                        </div>
+                                        <div class="slot-types">${types.map(type => `<span class="type-badge type-${type}">${type}</span>`).join('')}</div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+
+        function duplicateTeam(teamId) {
+            const original = teams.find(t => t.id === teamId);
+            if (original) { teamCounter++; teams.push({...original, id: Date.now(), name: `${original.name} (cópia)`, pokemons: original.pokemons.map(p => ({...p}))}); renderTeams(); }
+        }
+
+        function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+        async function exportTeamToPng(teamId) {
+            const team = teams.find(t => t.id === teamId);
+            if (!team) return;
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.add('active');
+            try {
+                const canvas = document.getElementById('pngCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 1000; canvas.height = 700;
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const accentColor = isDark ? '#8445d1' : '#DC143C';
+                ctx.fillStyle = isDark ? '#0D1117' : '#FAFAF5'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const logo = await getLogoSprite();
+                if (logo) ctx.drawImage(logo, 30, 15, 44, 44);
+                ctx.fillStyle = accentColor; ctx.font = 'bold 36px "Climate Crisis", cursive'; ctx.textAlign = 'left';
+                ctx.fillText('PokeTeam', 85, 50);
+                ctx.fillStyle = isDark ? '#FAFAF5' : '#1A1A1A'; ctx.font = '14px Syne, sans-serif';
+                ctx.fillText('POKÉMON CHAMPIONS', 85, 68);
+                ctx.textAlign = 'center'; ctx.font = 'bold 28px Syne, sans-serif';
+                ctx.fillText(team.name, canvas.width / 2, 85);
+                ctx.font = '13px "Space Grotesk", sans-serif'; ctx.fillStyle = isDark ? '#B0B0B0' : '#4A4A4A';
+                ctx.fillText(`(${team.type === 'single' ? 'Single Battle' : 'Double Battle'})`, canvas.width / 2, 108);
+                ctx.strokeStyle = accentColor; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(60, 128); ctx.lineTo(canvas.width - 60, 128); ctx.stroke();
+                const leftX = 70, rightX = 520, startY = 155, slotHeight = 155, slotWidth = 420;
+                const imagePromises = [];
+                for (let i = 0; i < 6; i++) {
+                    const slot = team.pokemons[i];
+                    const col = i < 3 ? 0 : 1, row = i % 3;
+                    const x = col === 0 ? leftX : rightX, y = startY + (row * slotHeight);
+                    ctx.fillStyle = isDark ? '#1C2333' : '#FFFFFF'; ctx.strokeStyle = isDark ? '#2A3040' : '#E0DCD0'; ctx.lineWidth = 1.5;
+                    ctx.beginPath(); ctx.roundRect(x - 8, y - 8, slotWidth, 140, 12); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = accentColor; ctx.font = 'bold 13px Syne, sans-serif'; ctx.textAlign = 'left';
+                    ctx.fillText(`SLOT ${i + 1}`, x + 5, y + 15);
+                    if (slot.pokemon) {
+                        const pokeData = getPokemonData(slot.pokemon);
+                        const displayName = capitalizeName(slot.pokemon);
+                        ctx.fillStyle = isDark ? '#FAFAF5' : '#1A1A1A'; ctx.font = 'bold 17px Syne, sans-serif';
+                        ctx.fillText(displayName, x + 100, y + 45);
+                        if (pokeData) {
+                            ctx.font = '11px "Space Grotesk", sans-serif'; let typeX = x + 100;
+                            pokeData.types.forEach(type => {
+                                const typeColor = getTypeColor(type); ctx.fillStyle = typeColor;
+                                const textWidth = ctx.measureText(type.toUpperCase()).width + 16;
+                                ctx.beginPath(); ctx.roundRect(typeX, y + 54, textWidth, 20, 10); ctx.fill();
+                                ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center';
+                                ctx.fillText(type.toUpperCase(), typeX + textWidth/2, y + 68); ctx.textAlign = 'left';
+                                typeX += textWidth + 6;
+                            });
+                        }
+                        if (slot.item) { ctx.fillStyle = isDark ? '#B0B0B0' : '#4A4A4A'; ctx.font = '12px "Space Grotesk", sans-serif'; ctx.fillText(`🎒 ${slot.item}`, x + 100, y + 100); }
+                        const gifUrl = getPokemonGifUrl(slot.pokemon);
+                        imagePromises.push(loadImage(gifUrl).then(img => {
+                            const maxW = 85, maxH = 85;
+                            const scale = Math.min(maxW / img.width, maxH / img.height);
+                            const w = img.width * scale, h = img.height * scale;
+                            ctx.drawImage(img, x + 5 + (maxW - w) / 2, y + 22 + (maxH - h) / 2, w, h);
+                        }).catch(() => {
+                            ctx.fillStyle = isDark ? '#B0B0B0' : '#4A4A4A'; ctx.font = '40px sans-serif'; ctx.textAlign = 'left'; ctx.fillText('🐾', x + 15, y + 75);
+                        }));
+                        if (slot.item) {
+                            imagePromises.push(loadImage(getItemImageUrl(slot.item)).then(img => {
+                                const maxW = 52, maxH = 52;
+                                const scale = Math.min(maxW / img.width, maxH / img.height);
+                                ctx.drawImage(img, x + slotWidth - 65 + (maxW - img.width * scale) / 2, y + 22 + (maxH - img.height * scale) / 2, img.width * scale, img.height * scale);
+                            }).catch(() => {}));
+                        }
+                    } else {
+                        ctx.fillStyle = isDark ? '#B0B0B0' : '#4A4A4A'; ctx.font = '14px "Space Grotesk", sans-serif'; ctx.textAlign = 'left';
+                        ctx.fillText('Nenhum Pokémon selecionado', x + 10, y + 60);
+                    }
+                }
+                await Promise.allSettled(imagePromises);
+                ctx.fillStyle = isDark ? '#B0B0B0' : '#4A4A4A'; ctx.font = '12px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('Created by PokeTeam Champions', canvas.width / 2, canvas.height - 25);
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a'); link.href = url;
+                    link.download = `${team.name.replace(/\s+/g, '_')}.png`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                }, 'image/png');
+            } catch (e) { console.error(e); alert('Erro ao gerar imagem.'); }
+            finally { loadingOverlay.classList.remove('active'); }
+        }
+
+        function getTypeColor(type) {
+            const c = { normal:'#A8A878',fire:'#F08030',water:'#6890F0',electric:'#F8D030',grass:'#78C850',ice:'#98D8D8',fighting:'#C03028',poison:'#A040A0',ground:'#E0C068',flying:'#A890F0',psychic:'#F85888',bug:'#A8B820',rock:'#B8A038',ghost:'#705898',dragon:'#7038F8',dark:'#705848',steel:'#B8B8D0',fairy:'#EE99AC' };
+            return c[type] || '#A8A878';
+        }
+
+        function exportTeams() {
+            document.getElementById('modalContent').innerHTML = `<h3>📤 Exportar Times</h3><textarea readonly id="exportText"></textarea><div class="modal-actions"><button class="btn" onclick="copyToClipboard()">📋 Copiar</button><button class="btn" onclick="downloadTxt()">💾 Baixar .txt</button><button class="btn" onclick="closeModal()">Fechar</button></div>`;
+            document.getElementById('exportText').value = JSON.stringify(teams, null, 2);
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function importTeams() {
+            document.getElementById('modalContent').innerHTML = `<h3>📥 Importar Times</h3><textarea id="importText" placeholder="Cole o JSON..."></textarea><div class="modal-actions"><input type="file" id="fileInput" accept=".txt,.json" onchange="loadFile(event)" style="display:none;"><button class="btn" onclick="document.getElementById('fileInput').click()">📁 Abrir</button><button class="btn btn-accent" onclick="executeImport()">Importar</button><button class="btn" onclick="closeModal()">Cancelar</button></div>`;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function executeImport() {
+            try {
+                const t = document.getElementById('importText').value.trim();
+                if (!t) return alert('Cole um JSON válido.');
+                const d = JSON.parse(t);
+                if (Array.isArray(d)) { d.forEach(x => { if (!x.id) x.id = Date.now() + Math.random(); }); teams = [...teams, ...d]; renderTeams(); closeModal(); }
+            } catch (e) { alert('JSON inválido!'); }
+        }
+        function loadFile(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => document.getElementById('importText').value = ev.target.result; r.readAsText(f); }
+        function copyToClipboard() { const t = document.getElementById('exportText'); t.select(); document.execCommand('copy'); alert('Copiado!'); }
+        function downloadTxt() { const b = new Blob([document.getElementById('exportText').value], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'poketeam-champions.txt'; a.click(); URL.revokeObjectURL(a.href); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePokemonModal(); closeItemModal(); closeComingSoonModal(); closeInfoModal(); } });
+        function toggleTheme() {
+            const h = document.documentElement;
+            const n = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            h.setAttribute('data-theme', n);
+            document.getElementById('themeToggle').textContent = n === 'dark' ? '☀️' : '🌙';
+            updateLogo(n); logoSprite = null; localStorage.setItem('poketeam-theme', n);
+        }
+        function updateLogo(t) { document.getElementById('logoImg').src = t === 'dark' ? 'https://i.imgur.com/kfQYTys.png' : 'https://i.imgur.com/lKI17PA.png'; }
+        (function() {
+            const s = localStorage.getItem('poketeam-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', s);
+            document.getElementById('themeToggle').textContent = s === 'dark' ? '☀️' : '🌙';
+            updateLogo(s);
+        })();
+        createNewTeam();
+    </script>
+</body>
+</html>
